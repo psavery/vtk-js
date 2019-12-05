@@ -19,6 +19,8 @@ function vtkKeyboardCameraManipulator(publicAPI, model) {
     keysCurrentlyDown: [],
     currentDirection: [0, 0, 0],
     movementIntervalId: null,
+    skipUpdateDirection: false,
+    cameraModifiedSubscription: null,
   };
 
   //--------------------------------------------------------------------------
@@ -45,6 +47,8 @@ function vtkKeyboardCameraManipulator(publicAPI, model) {
         return;
       }
 
+      // No need to update the direction when we move the camera here...
+      internal.skipUpdateDirection = true;
       publicAPI.moveCamera(
         renderer.getActiveCamera(),
         internal.currentDirection,
@@ -57,11 +61,18 @@ function vtkKeyboardCameraManipulator(publicAPI, model) {
       if (interactor.getLightFollowCamera()) {
         renderer.updateLightsGeometryToFollowCamera();
       }
+      internal.skipUpdateDirection = false;
     };
 
     publicAPI.calculateCurrentDirection();
 
     const renderer = internal.activeRenderer;
+    const camera = renderer.getActiveCamera();
+    // If the camera gets modified elsewhere, let's update the direction
+    internal.cameraModifiedSubscription = camera.onModified(
+      publicAPI.calculateCurrentDirection
+    );
+
     const interactor = renderer.getRenderWindow().getInteractor();
     interactor.requestAnimation(ANIMATION_REQUESTER);
     internal.movementIntervalId = setInterval(move, 1);
@@ -77,11 +88,20 @@ function vtkKeyboardCameraManipulator(publicAPI, model) {
     const interactor = renderer.getRenderWindow().getInteractor();
     interactor.cancelAnimation(ANIMATION_REQUESTER);
     internal.activeRenderer = null;
+
+    if (internal.cameraModifiedSubscription) {
+      internal.cameraModifiedSubscription.unsubscribe();
+      internal.cameraModifiedSubscription = null;
+    }
   };
 
   //--------------------------------------------------------------------------
 
   publicAPI.calculateCurrentDirection = () => {
+    if (internal.skipUpdateDirection) {
+      return;
+    }
+
     // Reset
     internal.currentDirection = [0, 0, 0];
 

@@ -4,15 +4,15 @@ import * as vtkMath from 'vtk.js/Sources/Common/Core/Math';
 
 const { vtkErrorMacro } = macro;
 
-const ANIMATION_REQUESTER = 'vtkKeyboardCameraManipulator';
+const ANIMATION_REQUESTER = 'vtkKeyboardCameraMovementManipulator';
 
 // ----------------------------------------------------------------------------
-// vtkKeyboardCameraManipulator methods
+// vtkKeyboardCameraMovementManipulator methods
 // ----------------------------------------------------------------------------
 
-function vtkKeyboardCameraManipulator(publicAPI, model) {
+function vtkKeyboardCameraMovementManipulator(publicAPI, model) {
   // Set our className
-  model.classHierarchy.push('vtkKeyboardCameraManipulator');
+  model.classHierarchy.push('vtkKeyboardCameraMovementManipulator');
 
   model.activeRenderer = null;
   model.keysCurrentlyDown = [];
@@ -233,14 +233,14 @@ export function extend(publicAPI, model, initialValues = {}) {
   ]);
 
   // Object specific methods
-  vtkKeyboardCameraManipulator(publicAPI, model);
+  vtkKeyboardCameraMovementManipulator(publicAPI, model);
 }
 
 // ----------------------------------------------------------------------------
 
 export const newInstance = macro.newInstance(
   extend,
-  'vtkKeyboardCameraManipulator'
+  'vtkKeyboardCameraMovementManipulator'
 );
 
 // ----------------------------------------------------------------------------

@@ -111,12 +111,7 @@ function vtkMouseCameraTrackballFirstPersonManipulator(publicAPI, model) {
     // that camera.modified() doesn't get emitted multiple times.
     camera.yaw(yaw);
     camera.pitch(pitch);
-
-    if (model.orthogonalizeViewUp) {
-      // If being used with the KeyboardCameraManipulator, this will
-      // allow the directions of "go up" and "go down" to change.
-      camera.orthogonalizeViewUp();
-    }
+    camera.orthogonalizeViewUp();
 
     renderer.resetCameraClippingRange();
 
@@ -132,7 +127,6 @@ function vtkMouseCameraTrackballFirstPersonManipulator(publicAPI, model) {
 
 const DEFAULT_VALUES = {
   sensitivity: 0.1,
-  orthogonalizeViewUp: false,
   usePointerLock: true,
 };
 
@@ -147,11 +141,7 @@ export function extend(publicAPI, model, initialValues = {}) {
   vtkCompositeMouseManipulator.extend(publicAPI, model, initialValues);
 
   // Create get-set macros
-  macro.setGet(publicAPI, model, [
-    'sensitivity',
-    'orthogonalizeViewUp',
-    'usePointerLock',
-  ]);
+  macro.setGet(publicAPI, model, ['sensitivity', 'usePointerLock']);
 
   // Object specific methods
   vtkMouseCameraTrackballFirstPersonManipulator(publicAPI, model);
